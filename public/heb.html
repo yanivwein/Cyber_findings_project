@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מסמך אפיון: SecurityScorecard Findings Dashboard</title>
+    <style>
+        /* הגדרות בסיסיות וריסט */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* גופן כללי נעים לעין */
+            line-height: 1.7;
+            margin: 0 auto;
+            /* ממורכז אוטומטית */
+            padding: 30px 20px;
+            /* מרווח פנימי סביב התוכן */
+            max-width: 960px;
+            /* רוחב מקסימלי לתוכן לקריאות טובה */
+            background-color: #eef1f5;
+            /* רקע עדין לכל העמוד */
+            color: #333;
+            /* צבע טקסט ראשי */
+            text-align: right;
+            /* יישור ברירת מחדל לימין עבור RTL */
+        }
+
+        /* עיצוב טקסט כללי */
+        p {
+            margin-bottom: 1.2em;
+            /* מרווח מתחת לפסקאות */
+        }
+
+        /* כותרות */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #004085;
+            /* כחול כהה יותר לכותרות */
+            margin-top: 30px;
+            /* מרווח גדול יותר מעל כותרות */
+            margin-bottom: 15px;
+            /* מרווח מתחת לכותרות */
+            padding-bottom: 8px;
+            /* ריפוד תחתון מעל הקו */
+            border-bottom: 2px solid #ced4da;
+            /* קו תחתון בולט יותר */
+            font-weight: 600;
+            /* הדגשה לכותרות */
+        }
+
+        h1 {
+            font-size: 2em;
+            /* גודל כותרת ראשית */
+            border-bottom-color: #0056b3;
+            /* צבע אחר לכותרת ראשית */
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            text-align: center;
+            /* מרכז כותרת ראשית */
+        }
+
+        h2 {
+            font-size: 1.6em;
+        }
+
+        h3 {
+            font-size: 1.3em;
+            border-bottom-width: 1px;
+            /* קו עדין יותר */
+            padding-bottom: 5px;
+            margin-top: 25px;
+        }
+
+
+        /* רשימות */
+        ul,
+        ol {
+            margin-bottom: 1.2em;
+            padding-right: 25px;
+            /* מרווח פנימי לרשימות ב-RTL */
+            padding-left: 0;
+            /* הסרת מרווח פנימי מהשמאל ב-RTL */
+        }
+
+        li {
+            margin-bottom: 0.6em;
+            /* מרווח קטן יותר בין פריטי רשימה */
+        }
+
+        ol {
+            list-style-type: decimal;
+            /* מספרים לרשימה מסודרת */
+        }
+
+        ul {
+            list-style-type: disc;
+            /* נקודות לרשימה לא מסודרת */
+        }
+
+
+        /* קו מפריד */
+        hr {
+            margin: 40px 0;
+            border: 0;
+            height: 1px;
+            /* גובה הקו */
+            background: #adb5bd;
+            /* צבע אפור לקו */
+            /* ניתן להוסיף מראה דמוי "שבר" ע"י: */
+            /* background: linear-gradient(to right, transparent, #ccc, transparent); */
+        }
+
+        /* סגנון לדוגמאות קוד ודיאגרמות (Left-to-Right) */
+        pre {
+            background-color: #f8f9fa;
+            /* רקע בהיר מאוד */
+            padding: 15px;
+            border-radius: 6px;
+            /* פינות מעוגלות יותר */
+            overflow-x: auto;
+            /* גלילה אופקית אם הקוד ארוך */
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6;
+            /* מסגרת עדינה */
+            direction: ltr;
+            /* מוגדר ישירות על האלמנט */
+            text-align: left;
+            /* יישור לשמאל */
+            unicode-bidi: embed;
+            /* מאפשר הטמעת טקסט LTR בתוך RTL */
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            /* גופן קוד */
+            font-size: 0.9em;
+            /* גופן קצת קטן יותר לקוד */
+            color: #212529;
+            /* צבע טקסט כהה לקוד */
+            white-space: pre-wrap;
+            /* גלישת שורות בקוד ארוך */
+            word-wrap: break-word;
+            /* שבירת מילים ארוכות */
+        }
+
+        code {
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+            /* גופן קוד */
+            font-size: 0.9em;
+            color: #c82333;
+            /* צבע אדום עדין לקוד inline */
+            background-color: #f8d7da;
+            /* רקע עדין ורוד לקוד inline */
+            border-radius: 4px;
+            padding: 3px 5px;
+            /* ריפוד עדין לקוד inline */
+        }
+
+        pre code {
+            display: block;
+            /* קוד בתוך pre הוא בלוק */
+            padding: 0;
+            /* pre כבר נותן פדינג */
+            background-color: transparent;
+            /* pre כבר נותן רקע */
+            color: #212529;
+            /* צבע קוד בתוך pre */
+            direction: ltr;
+            /* ודא LTR גם בתוך ה-code */
+            text-align: left;
+            unicode-bidi: embed;
+            white-space: pre-wrap;
+            /* גלישת שורות בקוד ארוך */
+            word-wrap: break-word;
+            /* שבירת מילים ארוכות */
+        }
+
+        /* סגנון מיוחד לתרשים הפשטני */
+        pre.diagram {
+            background-color: #e9ecef;
+            /* רקע אפור כחלחל */
+            color: #000;
+            border-color: #ced4da;
+            font-size: 0.85em;
+            /* קצת יותר קטן לדיאגרמה */
+        }
+
+        /* הסתרת טקסט של ignore בקוד */
+        .ignore-comment {
+            display: none;
+        }
+
+        /* סגנון לטקסט LTR בתוך פסקה RTL */
+        span[dir="ltr"] {
+            unicode-bidi: isolate;
+            /* מבודד את הטקסט מהכיווניות שמסביב */
+            display: inline-block;
+            /* מאפשר רווחים טובים יותר */
+            margin: 0 2px;
+            /* רווח קטן לפני ואחרי */
+        }
+
+        /* שיפור קריאות לקישורים (אם היו) */
+        a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* שוליים עליונים לפסקה הראשונה אחרי כותרת */
+        h1+p,
+        h2+p,
+        h3+p {
+            margin-top: 0.5em;
+        }
+
+        /* שוליים תחתונים עדינים לרשימה בתוך פריט רשימה */
+        li ul,
+        li ol {
+            margin-bottom: 0;
+            margin-top: 0.5em;
+        }
+
+        /* עיצוב עדין ל"ביצוע אפיון" */
+        body>p:first-of-type {
+            text-align: center;
+            font-size: 0.9em;
+            color: #6c757d;
+            /* אפור עדין */
+            margin-bottom: 30px;
+            /* מרווח תחתון גדול לפני הקו */
+        }
+
+        /* סגנון לקונטיינר של תמונות */
+        .image-container {
+            margin: 30px 0;
+            /* מרווח אנכי סביב התמונות */
+            text-align: center;
+            /* מרכז תמונות שקטנות מהרוחב המקסימלי */
+            border: 1px solid #dee2e6;
+            /* מסגרת עדינה כמו של קוד */
+            border-radius: 6px;
+            /* פינות מעוגלות כמו של קוד */
+            padding: 10px;
+            /* ריפוד פנימי בתוך המסגרת */
+            background-color: #f8f9fa;
+            /* רקע בהיר כמו של קוד */
+        }
+
+        .image-container img {
+            max-width: 100%;
+            /* ודא שהתמונה לא גדולה מדי */
+            height: auto;
+            /* שמור על יחס הגודל */
+            display: block;
+            /* התייחס לתמונה כאלמנט בלוק לצורך מירכוז */
+            margin: 0 auto;
+            /* מרכז את התמונה */
+        }
+    </style>
+</head>
+
+<body dir="rtl">
+
+    <p>
+        ביצוע אפיון - יניב וינמן
+    </p>
+    <hr>
+
+    <h1>מסמך אפיון פרוייקט: SecurityScorecard Findings Dashboard - Cyber Security project</h1>
+
+    <h2>1. מבוא</h2>
+    <p>
+        פרויקט זה הוא דשבורד (לוח מחוונים) אינטראקטיבי המציג ממצאי אבטחה (Findings) שנמשכים באמצעות ה-API של <span
+            dir="ltr">SecurityScorecard</span>. המטרה היא לספק למשתמשים תצוגה מרכזית של ממצאי אבטחה מחברות שונות
+        בפורטפוליו שלהם, מאפשרת סינון, הצגה לפי רמות סיכון (<span dir="ltr">Severity</span>) ופירוט של כל ממצא. הפרויקט
+        בנוי בארכיטקטורת <span dir="ltr">Client-Server</span> תוך שימוש בטכנולוגיות צד-לקוח (<span
+            dir="ltr">Frontend</span>) וצד-שרת (<span dir="ltr">Backend</span>).
+    </p>
+
+    <h2>2. מטרות הפרויקט</h2>
+    <ul>
+        <li>מתן ממשק ויזואלי ואינטואיטיבי לצפייה בממצאי אבטחה מ-<span dir="ltr">SecurityScorecard API</span>.</li>
+        <li>סיווג והצגת ממצאים לפי רמות סיכון (<span dir="ltr">High, Medium, Low</span>).</li>
+        <li>הצגת נתונים סטטיסטיים ותרשימים המייצגים את פיזור הממצאים לפי רמות סיכון ופקטורים.</li>
+        <li>אפשור סינון של הממצאים המוצגים על פי קריטריונים שונים (חברה, פקטור, ציון, טווח תאריכים).</li>
+        <li>מתן יכולת "<span dir="ltr">Drill-down</span>" לצפייה בפרטים מלאים על כל ממצא.</li>
+        <li>יכולת ייצוא הנתונים המוצגים (כל הממצאים או ממצאים מסוננים) לקובץ <span dir="ltr">CSV</span>.</li>
+        <li>הגנה בסיסית על הגישה לדשבורד באמצעות מסך התחברות פשוט (<span dir="ltr">Client-side authentication</span>).
+        </li>
+        <li>שימוש ב-<span dir="ltr">API</span> של <span dir="ltr">SecurityScorecard</span> לשליפת נתונים בזמן אמת (או
+            כפי שה-<span dir="ltr">API</span> מספק).</li>
+    </ul>
+
+    <h2>3. טכנולוגיות בשימוש</h2>
+    <p>
+        הפרויקט משלב מספר טכנולוגיות בצד הלקוח ובצד השרת:
+    </p>
+    <ul>
+        <li><span dir="ltr">HTML5</span>: מבנה בסיסי וארגון תוכן הדפים (<span dir="ltr">login.html, index.html</span>).
+        </li>
+        <li><span dir="ltr">CSS3</span>: עיצוב וסגנון ויזואלי (כולל שימוש ב-<span dir="ltr">Bootstrap</span> ו-<span
+                dir="ltr">CSS</span> מותאם אישית).</li>
+        <li><span dir="ltr">JavaScript</span>:
+            <ul>
+                <li><span dir="ltr">Client-side (Frontend)</span>: טיפול באינטראקציות משתמש, שליפת נתונים מה-<span
+                        dir="ltr">Backend API</span>, עיבוד והצגת נתונים בטבלאות ובתרשימים, סינון נתונים מקומי, טיפול
+                    ב-<span dir="ltr">Modal</span> (חלון קופץ) לפרטי ממצא, לוגיקת התחברות בסיסית, ויצוא נתונים ל-<span
+                        dir="ltr">CSV</span>.</li>
+                <li><span dir="ltr">Server-side (Backend - Node.js)</span>: יצירת שרת <span dir="ltr">Web</span>, ניהול
+                    ניתוב (<span dir="ltr">Routing</span>), חשיפת <span dir="ltr">API Endpoint</span>, שליפת נתונים
+                    מ-<span dir="ltr">SecurityScorecard API</span> באמצעות <span dir="ltr">HTTP Requests</span>, עיבוד
+                    ראשוני של הנתונים והחזרתם ללקוח בפורמט <span dir="ltr">JSON</span>.</li>
+            </ul>
+        </li>
+        <li><span dir="ltr">API (SecurityScorecard)</span>: מקור הנתונים החיצוני. הפרויקט מתממשק אליו כדי לשלוף את ממצאי
+            האבטחה.</li>
+        <li><span dir="ltr">Express</span>: <span dir="ltr">Framework</span> לצד השרת ב-<span dir="ltr">Node.js</span>.
+            משמש ליצירת שרת ה-<span dir="ltr">Web</span>, הגדרת <span dir="ltr">Routes</span> (נתיבים) וטיפול ב-<span
+                dir="ltr">HTTP Requests/Responses</span>.</li>
+        <li><span dir="ltr">Axios</span>: ספריית <span dir="ltr">Client</span> לביצוע <span dir="ltr">HTTP
+                Requests</span> מצד השרת (ב-<span dir="ltr">app.js</span>) ל-<span dir="ltr">SecurityScorecard
+                API</span>.</li>
+        <li><span dir="ltr">Dotenv</span>: ספרייה לטעינת משתני סביבה מקובץ <span dir="ltr">.env</span> (משמש לאחסון
+            ה-<span dir="ltr">API Key</span> של <span dir="ltr">SecurityScorecard</span>).</li>
+        <li><span dir="ltr">Bootstrap 5</span>: <span dir="ltr">Framework CSS</span> פופולרי המאפשר בניית ממשק משתמש
+            רספונסיבי ומעוצב במהירות (<span dir="ltr">Grid system, Components</span> כמו <span dir="ltr">Cards, Tables,
+                Navs, Modals, Dropdowns</span>).</li>
+        <li><span dir="ltr">Font Awesome</span>: ספרייה לאייקונים (<span dir="ltr">Font-based icons</span>) המשמשת
+            לשיפור המראה הוויזואלי (כפתורים, כותרות).</li>
+        <li><span dir="ltr">Chart.js</span>: ספריית <span dir="ltr">JavaScript</span> ליצירת תרשימים מותאמים אישית (שימש
+            ליצירת תרשימי ה-<span dir="ltr">Bar</span> וה-<span dir="ltr">Doughnut</span> בדשבורד).</li>
+        <li><span dir="ltr">jQuery</span>: ספריית <span dir="ltr">JavaScript</span> המשמשת בפרויקט בעיקר לצורך
+            אינטראקציה עם ה-<span dir="ltr">Modal</span> של <span dir="ltr">Bootstrap</span> (ניתן היה להשתמש ב-<span
+                dir="ltr">Bootstrap 5 JS</span> בלבד, אך <span dir="ltr">jQuery</span> נכלל בקוד).</li>
+        <li><span dir="ltr">MongoDB / Mongoose</span>: הערה חשובה: ספריות אלו מופיעות ב-<span
+                dir="ltr">package.json</span> ו-<span dir="ltr">package-lock.json</span> (התלויות של הפרויקט), אך הן
+            אינן בשימוש בפועל בקוד השרת (<span dir="ltr">app.js</span>) כפי שסופק. הן נכללו ככל הנראה לצורך פיתוח עתידי
+            או ניסויים, אך הדאשבורד הנוכחי לא מתחבר למסד נתונים <span dir="ltr">NoSQL</span> זה ואינו שומר בו נתונים.
+        </li>
+    </ul>
+
+    <h2>4. ארכיטקטורה</h2>
+    <p>
+        הפרויקט מיושם בארכיטקטורת <span dir="ltr">Client-Server</span>:
+    </p>
+    <ol>
+        <li><span dir="ltr">Client (דפדפן)</span>: מבוסס על קבצי <span dir="ltr">HTML, CSS, JavaScript</span>. מציג את
+            ממשק המשתמש, מטפל בלוגיקת ההתחברות (<span dir="ltr">Client-side</span>), מבצע קריאות <span dir="ltr">HTTP
+                GET</span> ל-<span dir="ltr">Backend API</span>, מעבד את הנתונים המתקבלים, מציג אותם בטבלאות ותרשימים,
+            מטפל בסינון וביצוא.</li>
+        <li><span dir="ltr">Server (Node.js + Express)</span>: מבוסס על הקובץ <span dir="ltr">app.js</span>. משמש כשרת
+            <span dir="ltr">HTTP</span> המגיש את קבצי ה-<span dir="ltr">Frontend</span> הסטטיים. בנוסף, חושף <span
+                dir="ltr">API Endpoint</span> (<span dir="ltr">/api/findings</span>) המשמש כמתווך (<span
+                dir="ltr">Proxy</span>) בין ה-<span dir="ltr">Client</span> ל-<span dir="ltr">SecurityScorecard
+                API</span>. ה-<span dir="ltr">Server</span> מטפל בהזדהות מול <span dir="ltr">SecurityScorecard
+                API</span> (באמצעות ה-<span dir="ltr">API Key</span>), שולף את המידע הרלוונטי ומעביר אותו ללקוח בפורמט
+            סטנדרטי (<span dir="ltr">JSON</span>). הוא אינו מאחסן את הנתונים באופן קבוע במסד נתונים.
+        </li>
+        <li><span dir="ltr">External API (SecurityScorecard)</span>: שירות חיצוני המספק את ממצאי האבטחה באמצעות <span
+                dir="ltr">REST API</span>.</li>
+    </ol>
+    <p>
+        תרשים ארכיטקטורה פשטני:
+    </p>
+    <pre dir="ltr" class="diagram"><code>
+      +------------+      HTTP Request      +---------------+      HTTP Request      +-----------------------+
+|   Client   | ---------------------> | Server (Node) | ---------------------> | SecurityScorecard API |
+| (Browser)  |                        |    Express    |                        |                       |
++------------+      HTTP Response     +---------------+      HTTP Response     +-----------------------+
+     ^                                       |
+     |                                       | Serves Static Files (HTML, CSS, JS)
+     |                                       |
+     +---------------------------------------+
+    </code></pre>
+
+    <h2>5. דרישות פונקציונליות</h2>
+    <ul>
+        <li>התחברות משתמש:
+            <ul>
+                <li>הצגת מסך התחברות (<span dir="ltr">login.html</span>).</li>
+                <li>קליטת שם משתמש וסיסמה.</li>
+                <li>בדיקה מקומית (<span dir="ltr">Client-side</span>) של התאמת פרטי ההתחברות לערכים קבועים מראש ('<span
+                        dir="ltr">admin</span>', '<span dir="ltr">securityscorecard</span>').</li>
+                <li>אחסון מצב ההתחברות ב-<span dir="ltr">sessionStorage</span>.</li>
+                <li>הפנייה לדף הדשבורד (<span dir="ltr">index.html</span>) במקרה של התחברות מוצלחת.</li>
+                <li>הצגת הודעת שגיאה במקרה של פרטים שגויים.</li>
+                <li>הפנייה לדף ההתחברות אם המשתמש מנסה לגשת לדשבורד ללא מצב התחברות ב-<span
+                        dir="ltr">sessionStorage</span>.</li>
+            </ul>
+        </li>
+        <li>דשבורד ראשי:
+            <ul>
+                <li>הצגת כותרת הפרויקט ופרטים על היוצר.</li>
+                <li>הצגת כפתורי פעולה: רענון, יצוא, התנתקות.</li>
+                <li>הצגת סיכום סטטיסטי של ממצאים: סך הכל, <span dir="ltr">High, Medium, Low</span>.</li>
+                <li>הצגת תרשים עמודות (<span dir="ltr">Bar Chart</span>) המפרט ממצאים לפי פקטורים ולפי רמת סיכון.</li>
+                <li>הצגת תרשים עוגה (<span dir="ltr">Doughnut Chart</span>) המפרט פיזור ממצאים לפי רמת סיכון.</li>
+            </ul>
+        </li>
+        <li>סינון ממצאים:
+            <ul>
+                <li>הצגת פקדי סינון: בחירת חברה, בחירת פקטור, בחירת ציון (<span dir="ltr">Grade</span>), בחירת טווח
+                    תאריכים (היום, השבוע, החודש, כל הזמן).</li>
+                <li>עדכון דינמי של הטבלאות בהתאם לבחירות הסינון.</li>
+            </ul>
+        </li>
+        <li>הצגת ממצאים מפורטת:
+            <ul>
+                <li>חלוקת הממצאים לטאבים (<span dir="ltr">Tabs</span>) לפי רמת סיכון: <span dir="ltr">High, Medium,
+                        Low</span>.</li>
+                <li>בכל טאב, הצגת טבלה עם עמודות עיקריות לכל ממצא: חברה, ממצא (כותרת), פקטור, ציון פקטור, השפעה על
+                    הציון, מספר הבעיות, תאריך/שעה.</li>
+                <li>מתן כפתור "פרטים" ("<span dir="ltr">Drilldown</span>") בכל שורה בטבלה.</li>
+            </ul>
+        </li>
+        <li>פרטי ממצא (<span dir="ltr">Modal</span>):
+            <ul>
+                <li>הצגת חלון קופץ (<span dir="ltr">Modal</span>) בלחיצה על כפתור "פרטים".</li>
+                <li>הצגת פרטים מורחבים על הממצא הנבחר, כולל חברה, דומיין, כותרת, תיאור, רמת סיכון, פקטור, ציון פקטור,
+                    השפעה על הציון, מספר בעיות, תאריך/שעה, סוג בעיה וכל הנתונים המלאים בפורמט <span
+                        dir="ltr">JSON</span>.</li>
+            </ul>
+        </li>
+        <li>יצוא נתונים:
+            <ul>
+                <li>כפתור "<span dir="ltr">Export</span>" עם תפריט נגלל (<span dir="ltr">Dropdown</span>).</li>
+                <li>אפשרויות יצוא: כל הממצאים, ממצאים מסוננים (לפי המסננים הפעילים), ממצאים לפי רמת סיכון ספציפית (<span
+                        dir="ltr">High, Medium, Low</span>).</li>
+                <li>יצוא הנתונים לקובץ בפורמט <span dir="ltr">CSV</span>.</li>
+            </ul>
+        </li>
+        <li>רענון נתונים:
+            <ul>
+                <li>כפתור "<span dir="ltr">Refresh Data</span>" המבצע קריאה חוזרת ל-<span dir="ltr">Backend API</span>
+                    ועדכון כל הממשק.</li>
+            </ul>
+        </li>
+        <li>מצב טעינה:
+            <ul>
+                <li>הצגת מסך טעינה (<span dir="ltr">Loading Overlay</span>) בזמן שהנתונים נמשכים מה-<span
+                        dir="ltr">Backend API</span>.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>צילומי מסך של ממשק המשתמש (UI)</h2>
+
+    <h3>מבט כללי על הדשבורד</h3>
+    <div class="image-container">
+        <img src="/public/sc1.JPG"
+            alt="צילום מסך של מבט כללי על דשבורד SecurityScorecard Findings המציג כרטיסי סטטיסטיקה, תרשים עמודות ותרשים עוגה.">
+    </div>
+
+    <h3>טבלת ממצאים וסינון</h3>
+    <div class="image-container">
+        <img src="/public/sc2.JPG"
+            alt="צילום מסך של דשבורד SecurityScorecard Findings המציג את טבלת הממצאים עם טאבים לרמות סיכון ופקדי סינון.">
+    </div>
+
+
+    <h2>6. פרטי יישום טכני</h2>
+
+    <h3>6.1 צד הלקוח (Frontend)</h3>
+
+    <h4>6.1.1 מבנה HTML ועיצוב CSS (index.html, login.html, Custom CSS)</h4>
+    <ul>
+        <li>הקוד משתמש במבנה <span dir="ltr">HTML</span> סמנטי בסיסי.</li>
+        <li><span dir="ltr">Bootstrap 5</span> מספק את רוב העיצוב והרספונסיביות (<span dir="ltr">Grid system - .row,
+                .col-*, Components</span> - כמו <span dir="ltr">.card, .table, .nav-tabs, .modal, .dropdown</span>,
+            כפתורים - <span dir="ltr">.btn</span>, טפסים - <span dir="ltr">.form-select, .form-control</span>).</li>
+        <li><span dir="ltr">Font Awesome</span> מספק אייקונים ויזואליים (למשל, <span dir="ltr">fas fa-shield-alt, fas
+                fa-sync-alt, fas fa-file-export</span>).</li>
+        <li>קובץ ה-<span dir="ltr">CSS</span> הפנימי ב-<span dir="ltr">index.html</span> מספק סגנונות מותאמים אישית
+            המרחיבים את <span dir="ltr">Bootstrap</span> או דורסים אותו לצרכים ספציפיים (למשל, עיצוב ה-<span
+                dir="ltr">.grade-badge</span>, צבעי ה-<span dir="ltr">.severity-high, .medium-severity,
+                .low-severity</span>, עיצוב ה-<span dir="ltr">.loading-overlay</span> וה-<span
+                dir="ltr">.json-viewer</span>).</li>
+    </ul>
+    <p>
+        דוגמת קוד - מבנה כרטיס סטטיסטי (מתוך <span dir="ltr">index.html</span>):
+    </p>
+    <pre dir="ltr"><code>
+      &lt;div class="col-md-3"&gt;
+    &lt;div class="card stats-card"&gt;
+        &lt;div class="card-body"&gt;
+            &lt;div class="label"&gt;High Severity&lt;/div&gt;
+            &lt;div class="number high-severity" id="highCount"&gt;0&lt;/div&gt;
+            &lt;div class="progress"&gt;
+                &lt;div class="progress-bar progress-bar-high" role="progressbar" style="width: 100%"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+    </code></pre>
+    <p>
+        שימוש ב-<span dir="ltr">.card, .stats-card</span> (מותאם אישית), <span dir="ltr">.card-body, .label, .number,
+            .progress, .progress-bar</span> של <span dir="ltr">Bootstrap</span> יחד עם מחלקות צבע מותאמות אישית.
+    </p>
+    <p>
+        דוגמת קוד - עיצוב <span dir="ltr">Grade Badge</span> (מתוך ה-<span dir="ltr">CSS</span> ב-<span
+            dir="ltr">index.html</span>):
+    </p>
+    <pre dir="ltr"><code>
+.grade-badge {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px; /* ממורכז אנכית */
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+    color: white;
+}
+
+.grade-A {
+    background-color: #28a745; /* צבע ירוק */
+}
+/* ... צבעים נוספים ל-B, C, D, F */
+    </code></pre>
+
+    <h4>6.1.2 לוגיקת JavaScript (Client-side Script ב-index.html)</h4>
+    <ul>
+        <li>טעינת נתונים (<span dir="ltr">loadData</span>): פונקציה אסינכרונית המבצעת <span dir="ltr">Fetch</span>
+            ל-<span dir="ltr">API Endpoint</span> ב-<span dir="ltr">Backend</span> (<span
+                dir="ltr">/api/findings</span>). מציגה ומסתירה את מסך הטעינה. מעדכנת את המשתנה הגלובלי <span
+                dir="ltr">allFindings</span>. לאחר הטעינה, קוראת לפונקציות לעדכון סטטיסטיקות, טבלאות, תרשימים ומסננים.
+        </li>
+    </ul>
+    <p>
+        דוגמת קוד - <span dir="ltr">Fetch API call</span>:
+    </p>
+    <pre dir="ltr"><code>
+async function loadData() {
+    showLoading(true);
+    try {
+        const response = await fetch('/api/findings');
+        if (!response.ok) {
+            throw new Error('Failed to fetch findings');
+        }
+        allFindings = await response.json();
+        updateCounts();
+        populateTables(); // Populate initial tables
+        updateCharts();
+        populateFilters(); // Populates filters and sets up listeners
+        setupExportButtons(); // Setup export buttons
+        showLoading(false);
+    } catch (error) {
+        console.error('Error loading findings:', error);
+        alert('Failed to load findings. Please try again.');
+        showLoading(false);
+    }
+}
+    </code></pre>
+    <ul>
+        <li>עדכון סטטיסטיקות (<span dir="ltr">updateCounts</span>): סופרת את מספר הממצאים בכל רמת סיכון (<span
+                dir="ltr">High, Medium, Low</span>) ובסך הכל מתוך המשתנה <span dir="ltr">allFindings</span> ומעדכנת את
+            האלמנטים המתאימים ב-<span dir="ltr">HTML</span> (<span dir="ltr">#highCount, #mediumCount, #lowCount,
+                #totalFindings</span>).</li>
+        <li>עדכון תרשימים (<span dir="ltr">updateCharts</span>): אוספת את הנתונים הרלוונטיים (כמות ממצאים לפי פקטור
+            וסיכון, כמות ממצאים לפי סיכון) מהמשתנה <span dir="ltr">allFindings</span>. מעדכנת את האובייקטים של <span
+                dir="ltr">Chart.js</span> (<span dir="ltr">factorChart, severityChart</span>) וגורמת להם לבצע עדכון
+            (<span dir="ltr">render</span>) מחדש.</li>
+    </ul>
+    <p>
+        דוגמת קוד - עדכון <span dir="ltr">Chart.js</span>:
+    </p>
+    <pre dir="ltr"><code>
+// ... within updateCharts()
+factorChart.data.labels = factorNames;
+factorChart.data.datasets[0].data = highData;
+factorChart.data.datasets[1].data = mediumData;
+factorChart.data.datasets[2].data = lowData;
+factorChart.update();
+
+severityChart.data.datasets[0].data = [
+    allFindings.high.length,
+    allFindings.medium.length,
+    allFindings.low.length
+];
+severityChart.update();
+    </code></pre>
+    <ul>
+        <li>אוכלוסיית מסננים (<span dir="ltr">populateFilters</span>): אוספת את רשימת החברות והפקטורים הייחודיים מכל
+            הממצאים במשתנה <span dir="ltr">allFindings</span>. מוסיפה אותם כאפשרויות (<span
+                dir="ltr">&lt;option&gt;</span>) לרשימות הנפתחות המתאימות (<span dir="ltr">#companyFilter,
+                #factorFilter</span>). קוראת לפונקציה <span dir="ltr">setupFilterListeners</span> להגדרת האזנה לשינויים.
+        </li>
+        <li>הגדרת האזנה למסננים (<span dir="ltr">setupFilterListeners</span>): מוסיפה <span dir="ltr">Event
+                Listener</span> (מסוג '<span dir="ltr">change</span>') לכל אחד מפקדי הסינון. כל שינוי באחד מהם מפעיל את
+            הפונקציה <span dir="ltr">applyFilters</span>.</li>
+        <li>החלת מסננים (<span dir="ltr">applyFilters</span>): נקראת בכל פעם שאחד המסננים משתנה. קוראת את הערכים
+            הנוכחיים מכל פקדי הסינון. מבצעת לולאה על הממצאים בכל רמת סיכון במשתנה <span dir="ltr">allFindings</span>,
+            מפעילה עליהם את הפונקציה <span dir="ltr">filterFinding</span> ויוצרת מערכים חדשים של ממצאים מסוננים. מרוקנת
+            את טבלאות ה-<span dir="ltr">HTML</span> ומאכלסת אותן מחדש רק עם הממצאים המסוננים באמצעות הפונקציה <span
+                dir="ltr">addFindingToTable</span>.</li>
+        <li>פונקציית סינון (<span dir="ltr">filterFinding</span>): פונקציה מקומית ב-<span dir="ltr">Client-side</span>
+            שמקבלת אובייקט ממצא וערכי הסינון הנוכחיים. מחזירה <span dir="ltr">true</span> אם הממצא עומד בכל תנאי הסינון,
+            ו-<span dir="ltr">false</span> אחרת. כוללת לוגיקה לסינון לפי חברה, פקטור, ציון ותאריכים (היום, שבוע אחרון,
+            חודש אחרון).</li>
+    </ul>
+    <p>
+        דוגמת קוד - לוגיקת סינון תאריכים:
+    </p>
+    <pre dir="ltr"><code>
+if (date) {
+    if (!finding.created_at) return false; // Skip if no date
+
+    const findingDate = new Date(finding.created_at);
+    const now = new Date();
+
+    if (date === 'today') {
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        if (findingDate &lt; todayStart || findingDate &gt;= todayEnd) return false;
+    } else if (date === 'week') {
+        const sevenDaysAgo = new Date(now);
+        sevenDaysAgo.setDate(now.getDate() - 7);
+        if (findingDate &lt; sevenDaysAgo || findingDate &gt; now) return false;
+    } else if (date === 'month') {
+        const thirtyDaysAgo = new Date(now);
+        thirtyDaysAgo.setDate(now.getDate() - 30);
+        if (findingDate &lt; thirtyDaysAgo || findingDate &gt; now) return false;
+    }
+}
+return true; // Finding passes all filters
+    </code></pre>
+    <ul>
+        <li>אוכלוסיית טבלה (<span dir="ltr">populateTables, addFindingToTable</span>): <span
+                dir="ltr">populateTables</span> נקראת לאחר טעינת הנתונים (או החלת סינון) ומנקה את כל גופי הטבלאות. <span
+                dir="ltr">addFindingToTable</span> מקבלת ממצא ומוסיפה שורה חדשה לטבלה הספציפית (<span
+                dir="ltr">High/Medium/Low</span>). יוצרת את ה-<span dir="ltr">HTML</span> עבור השורה כולל כפתור "פרטים"
+            עם <span dir="ltr">data-* attributes</span> לשמירת רמת הסיכון והאינדקס המקורי של הממצא במערך <span
+                dir="ltr">allFindings</span> (חשוב לצורך <span dir="ltr">Drilldown</span>). מוסיפה <span dir="ltr">Event
+                Listener</span> לכפתור "פרטים".</li>
+    </ul>
+    <p>
+        דוגמת קוד - יצירת שורת טבלה והוספת <span dir="ltr">Listener</span>:
+    </p>
+    <pre dir="ltr"><code>
+function addFindingToTable(tableId, finding, severity, index) {
+    const tableBody = document.getElementById(tableId);
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        &lt;td&gt;${finding.companyName || 'N/A'}&lt;/td&gt;
+        ... other cells ...
+        &lt;td&gt;
+          &lt;button class="btn btn-sm btn-primary drilldown-btn" data-severity="${severity}" data-index="${index}"&gt;
+            &lt;i class="fas fa-search-plus"&gt;&lt;/i&gt; Details
+          &lt;/button&gt;
+        &lt;/td&gt;
+    `;
+    row.querySelector('.drilldown-btn').addEventListener('click', function () {
+        const severity = this.getAttribute('data-severity');
+        const index = parseInt(this.getAttribute('data-index'), 10);
+        showFindingDetails(severity, index); // Call function to show modal
+    });
+    tableBody.appendChild(row);
+}
+    </code></pre>
+    <ul>
+        <li>הצגת פרטי ממצא (<span dir="ltr">showFindingDetails</span>): נקראת מלחיצה על כפתור "פרטים". מקבלת את רמת
+            הסיכון והאינדקס המקורי של הממצא. מוצאת את הממצא המתאים במערך <span dir="ltr">allFindings</span>. מאכלסת את
+            האלמנטים בתוך ה-<span dir="ltr">HTML Modal</span> (חלון קופץ) עם פרטי הממצא. מציגה את ה-<span
+                dir="ltr">Modal</span>.</li>
+    </ul>
+    <p>
+        דוגמת קוד - מציאת הממצא והצגת <span dir="ltr">JSON</span> ב-<span dir="ltr">Modal</span>:
+    </p>
+    <pre dir="ltr"><code>
+function showFindingDetails(severity, index) {
+    const finding = allFindings[severity] &amp;&amp; allFindings[severity][index] ? allFindings[severity][index] : null;
+    if (!finding) { /* Handle error */ return; }
+
+    // Populate HTML elements in the modal...
+    document.getElementById('modal-json').textContent = JSON.stringify(finding, null, 2);
+
+    findingDetailsModal.show(); // Show the Bootstrap modal
+}
+    </code></pre>
+    <ul>
+        <li>יצוא <span dir="ltr">CSV</span> (<span dir="ltr">convertToCSV, downloadCSV, setupExportButtons</span>):
+            <ul>
+                <li><span dir="ltr">convertToCSV</span>: מקבלת מערך של אובייקטי ממצאים וממירה אותם למחרוזת בפורמט <span
+                        dir="ltr">CSV</span>, כולל עמודות כותרת וטיפול בשדות המכילים פסיקים או גרשיים.</li>
+                <li><span dir="ltr">downloadCSV</span>: מקבלת תוכן <span dir="ltr">CSV</span> ושם קובץ, ויוצרת לינק
+                    וירטואלי להורדת הקובץ בדפדפן.</li>
+                <li><span dir="ltr">setupExportButtons</span>: מגדירה <span dir="ltr">Event Listeners</span> לכפתורי
+                    היצוא בתפריט הנפתח. כל כפתור מפעיל את הלוגיקה המתאימה (יצוא הכל, יצוא מסונן, יצוא לפי סיכון) תוך
+                    שימוש בפונקציות <span dir="ltr">convertToCSV</span> ו-<span dir="ltr">downloadCSV</span>. יצוא
+                    "ממצאים מסוננים" קורא את ערכי המסננים הנוכחיים ומפעיל את <span dir="ltr">filterFinding</span> שוב על
+                    כל הנתונים כדי לקבל את הרשימה הנכונה לייצוא.</li>
+            </ul>
+        </li>
+    </ul>
+    <p>
+        דוגמת קוד - <span dir="ltr">Event Listener</span> לכפתור יצוא מסונן:
+    </p>
+    <pre dir="ltr"><code>
+document.getElementById('exportFilteredCsv').addEventListener('click', function (e) {
+    e.preventDefault();
+    // Get filter values...
+    const companyValue = document.getElementById('companyFilter').value;
+    // ... get other filter values ...
+
+    // Filter findings using the client-side filterFinding function
+    const filteredHigh = allFindings.high.filter(finding => filterFinding(finding, companyValue, factorValue, gradeValue, dateValue));
+    const filteredMedium = allFindings.medium.filter(finding => filterFinding(finding, companyValue, factorValue, gradeValue, dateValue));
+    const filteredLow = allFindings.low.filter(finding => filterFinding(finding, companyValue, factorValue, gradeValue, dateValue));
+
+    const filteredFindings = [...filteredHigh, ...filteredMedium, ...filteredLow];
+    const csv = convertToCSV(filteredFindings);
+    downloadCSV(csv, 'securityscorecard_filtered_findings.csv');
+});
+    </code></pre>
+    <ul>
+        <li>לוגיקת התחברות (<span dir="ltr">login.html script</span>): קוד <span dir="ltr">JavaScript</span> פשוט המאזין
+            לאירוע <span dir="ltr">Submit</span> של הטופס. קורא את ערכי השדות, מבצע השוואה לערכים קבועים מראש ('<span
+                dir="ltr">admin</span>', '<span dir="ltr">securityscorecard</span>'). במקרה של התאמה, שומר ב-<span
+                dir="ltr">sessionStorage</span> את המפתח '<span dir="ltr">authenticated</span>' עם הערך '<span
+                dir="ltr">true</span>' ומפנה לדף הדשבורד. במקרה של אי התאמה, מציג הודעת שגיאה.</li>
+    </ul>
+    <p>
+        דוגמת קוד - לוגיקת התחברות:
+    </p>
+    <pre dir="ltr"><code>
+document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    if (username === 'admin' &amp;&amp; password === 'securityscorecard') { // Hardcoded check
+        sessionStorage.setItem('authenticated', 'true');
+        window.location.href = 'index.html';
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+});
+    </code></pre>
+    <ul>
+        <li>בדיקת אימות ב-<span dir="ltr">index.html</span>: קוד <span dir="ltr">JavaScript</span> בתחילת הקובץ בודק האם
+            המפתח '<span dir="ltr">authenticated</span>' קיים ושווי ל-'<span dir="ltr">true</span>' ב-<span
+                dir="ltr">sessionStorage</span>. אם לא, מפנה אוטומטית לדף ההתחברות. פונקציית ה-<span
+                dir="ltr">logout</span> פשוט מוחקת מפתח זה ומפנה ל-<span dir="ltr">/login.html</span>.</li>
+    </ul>
+
+    <h3>6.2 צד השרת (Backend - app.js)</h3>
+    <ul>
+        <li>הגדרת שרת <span dir="ltr">Express</span>: יצירת אפליקציית <span dir="ltr">Express</span> בסיסית. הגדרת פורט
+            להאזנה (משתנה סביבה או ברירת מחדל 3000).</li>
+    </ul>
+    <p>
+        דוגמת קוד - <span dir="ltr">Express Setup</span>:
+    </p>
+    <pre dir="ltr"><code>
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+// ... other imports
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+});
+    </code></pre>
+    <ul>
+        <li>הגשת קבצים סטטיים: הגדרת <span dir="ltr">Middleware</span> של <span dir="ltr">Express</span> (<span
+                dir="ltr">express.static('public')</span>) כדי להגיש קבצים סטטיים (כמו <span dir="ltr">index.html,
+                login.html, CSS, JS</span>) מתיקיית <span dir="ltr">public</span>. יש להעביר את קבצי ה-<span
+                dir="ltr">Frontend</span> (למעט אולי ה-<span dir="ltr">JS</span> המוטמע ב-<span dir="ltr">HTML</span>)
+            לתיקייה זו.</li>
+        <li>ניתוב בסיסי: הגדרת ניתוב עבור נתיב הבסיס (<span dir="ltr">/</span>) שמפנה לדף ההתחברות (<span
+                dir="ltr">login.html</span>).</li>
+    </ul>
+    <p>
+        דוגמת קוד - ניתוב בסיסי:
+    </p>
+    <pre dir="ltr"><code>
+app.use(express.static('public')); // Assuming files are in 'public'
+app.get('/', (req, res) => {
+    res.redirect('/login.html'); // Redirect to login
+});
+    </code></pre>
+    <ul>
+        <li><span dir="ltr">API Endpoint (/api/findings)</span>: הגדרת נתיב <span dir="ltr">GET</span> ל-<span
+                dir="ltr">API</span> זה. זוהי הפונקציה העיקרית בצד השרת לשליפת הנתונים.</li>
+        <li>טעינת משתני סביבה (<span dir="ltr">dotenv</span>): שימוש בספריית <span dir="ltr">dotenv</span> לטעינת משתני
+            סביבה מקובץ <span dir="ltr">.env</span> (כמו ה-<span dir="ltr">API Key</span>).</li>
+    </ul>
+    <p>
+        דוגמת קוד - <span dir="ltr">Dotenv</span>:
+    </p>
+    <pre dir="ltr"><code>
+require('dotenv').config();
+const API_KEY = process.env.SECURITYSCORECARD_API_KEY;
+    </code></pre>
+    <ul>
+        <li>שליפת נתונים מ-<span dir="ltr">SecurityScorecard API</span> (<span dir="ltr">axios</span>):
+            <ul>
+                <li>הפונקציה ב-<span dir="ltr">/api/findings</span> משתמשת ב-<span dir="ltr">axios</span> לביצוע קריאות
+                    ל-<span dir="ltr">SecurityScorecard API</span>.</li>
+                <li>שלב ראשון: שליפת רשימת הפורטפוליוז (<span dir="ltr">/portfolios</span>).</li>
+                <li>שלב שני: לולאה על כל פורטפוליו שנמצא, ושליפת רשימת החברות בתוך כל פורטפוליו (<span
+                        dir="ltr">/portfolios/:id/companies</span>). איסוף כל החברות שנמצאו (תוך הסרת כפילויות).</li>
+                <li>שלב שלישי: לולאה על כל חברה ייחודית, ושליפת רשימת הפקטורים עבור חברה זו (<span
+                        dir="ltr">/companies/:domain/factors</span>).</li>
+                <li>שלב רביעי: בתוך הלולאה על הפקטורים, עיבוד הנתונים מתוך <span dir="ltr">factor.issue_summary</span>.
+                    יצירת אובייקט "ממצא" חדש לכל <span dir="ltr">issue_summary</span>, כולל פרטים רלוונטיים ושיוך לחברה
+                    ולפקטור. קטלוג הממצאים למערכי <span dir="ltr">high, medium, low</span>.</li>
+                <li>טיפול בפקטורים עם ציון ירוד (<span dir="ltr">D, F</span>) ללא פירוט ב-<span
+                        dir="ltr">issue_summary</span> - יצירת ממצא כללי עבורם.</li>
+            </ul>
+        </li>
+    </ul>
+    <p>
+        דוגמת קוד - שליפת פורטפוליוז וחברות:
+    </p>
+    <pre dir="ltr"><code>
+app.get('/api/findings', async (req, res) => {
+    try {
+        // Fetch Portfolios
+        const portfoliosResponse = await axios.get(`${API_BASE_URL}/portfolios`, { headers: { 'Authorization': `Token ${API_KEY}`, 'Accept': 'application/json' } });
+        const portfolios = portfoliosResponse.data.entries;
+
+        let allCompanies = [];
+        for (const portfolio of portfolios) {
+            // Fetch companies for each portfolio
+            const portfolioCompaniesResponse = await axios.get(`${API_BASE_URL}/portfolios/${portfolio.id}/companies`, { headers: { 'Authorization': `Token ${API_KEY}`, 'Accept': 'application/json' } });
+            if (portfolioCompaniesResponse.data &amp;&amp; portfolioCompaniesResponse.data.entries) {
+                 allCompanies = [...allCompanies, ...portfolioCompaniesResponse.data.entries];
+            }
+        }
+        // Remove duplicates...
+
+        // Loop through uniqueCompanies and fetch factors...
+        // Process factors and issues...
+
+        res.json(allFindings); // Return the categorized findings
+    } catch (error) {
+        console.error('Error fetching findings:', error.message);
+        res.status(500).json({ error: 'Failed to fetch findings', details: error.message });
+    }
+});
+    </code></pre>
+    <ul>
+        <li>עיבוד וקיטלוג ממצאים: לוגיקה שממפה את הנתונים הגולמיים מה-<span dir="ltr">API</span> לאובייקטי "ממצא" בעלי
+            מבנה אחיד, וממיינת אותם למערכי <span dir="ltr">High, Medium, Low</span> בתוך האובייקט <span
+                dir="ltr">allFindings</span> הסופי שנשלח ללקוח. מטפלת במקרה של שדות חסרים מה-<span dir="ltr">API</span>
+            (משתמשת ב-'<span dir="ltr">N/A</span>' או ברירות מחדל).</li>
+        <li>פונקציות עזר ב-<span dir="ltr">Backend</span>: קיימות פונקציות עזר כמו <span
+                dir="ltr">formatIssueType</span> ו-<span dir="ltr">formatFactorName</span> שמטרתן לעבד את שמות
+            הפקטורים/סוגי הבעיות המתקבלים מה-<span dir="ltr">API</span> (שהם לרוב בפורמט <span
+                dir="ltr">snake_case</span>) לפורמט קריא יותר למשתמש (עם רווחים ואותיות רישיות). שים לב שפונקציות דומות
+            קיימות גם ב-<span dir="ltr">Client-side JavaScript</span> ומשמשות שם לצורך תצוגה וסינון מקומי.</li>
+        <li><span dir="ltr">Mock Data Fallback</span>: אם תהליך שליפת הנתונים מה-<span dir="ltr">API</span> אינו מניב
+            ממצאים כלל, קיימת לוגיקה להוספת נתוני <span dir="ltr">Mock</span> קבועים מראש כדי שהדשבורד לא יהיה ריק
+            לחלוטין. זה שימושי לבדיקה או במקרה של כשל <span dir="ltr">API</span>.</li>
+    </ul>
+
+    <h3>6.3 שימוש ב-MongoDB/Mongoose (לא מיושם)</h3>
+    <p>
+        למרות שהתלויות כלולות ב-<span dir="ltr">package.json</span>, קוד ה-<span dir="ltr">app.js</span> אינו כולל קוד
+        שמבצע:
+    </p>
+    <ul>
+        <li>חיבור לשרת <span dir="ltr">MongoDB</span>.</li>
+        <li>הגדרת <span dir="ltr">Schemas</span> או <span dir="ltr">Models</span> באמצעות <span
+                dir="ltr">Mongoose</span>.</li>
+        <li>שמירת נתונים (ממצאים) במסד הנתונים.</li>
+        <li>שליפת נתונים ממסד הנתונים (במקום או בנוסף לשליפה מה-<span dir="ltr">SecurityScorecard API</span>).</li>
+    </ul>
+    <p>
+        אם הפרויקט היה מפותח יותר, ספריות אלו היו יכולות לשמש לצורך:
+    </p>
+    <ul>
+        <li>אחסון מקומי של ממצאי <span dir="ltr">API</span> (כדי להימנע מקריאות חוזרות ונשנות ל-<span
+                dir="ltr">API</span> החיצוני או לאפשר היסטוריה ארוכה יותר).</li>
+        <li>ניהול משתמשים והרשאות בצד השרת (במקום אימות מקומי בסיסי).</li>
+        <li>שמירת הגדרות משתמש או סטטיסטיקות מצטברות.</li>
+    </ul>
+
+    <h2>7. זרימת נתונים</h2>
+    <ol>
+        <li>התחברות:
+            <ul>
+                <li>משתמש ניגש לכתובת הבסיס (<span dir="ltr">/</span>).</li>
+                <li>שרת <span dir="ltr">Express</span> מפנה אותו ל-<span dir="ltr">/login.html</span>.</li>
+                <li>הדפדפן טוען את <span dir="ltr">login.html</span> ואת קבצי ה-<span dir="ltr">CSS/JS</span> הנלווים
+                    (<span dir="ltr">Bootstrap, Font Awesome</span>).</li>
+                <li>משתמש מזין פרטים ושולח טופס.</li>
+                <li>קוד <span dir="ltr">JavaScript</span> ב-<span dir="ltr">login.html</span> בודק את הפרטים. אם תקין,
+                    שומר ב-<span dir="ltr">sessionStorage</span> ומפנה ל-<span dir="ltr">/index.html</span>.</li>
+            </ul>
+        </li>
+        <li>טעינת דשבורד ראשונית:
+            <ul>
+                <li>הדפדפן ניגש ל-<span dir="ltr">/index.html</span>.</li>
+                <li>קוד ה-<span dir="ltr">JS</span> בתחילת <span dir="ltr">index.html</span> בודק <span
+                        dir="ltr">sessionStorage</span>. אם מאומת, ממשיך. אם לא, מפנה ל-<span
+                        dir="ltr">/login.html</span>.</li>
+                <li>הדפדפן טוען את <span dir="ltr">index.html</span> ואת קבצי ה-<span dir="ltr">CSS/JS</span> הנלווים
+                    (<span dir="ltr">Bootstrap, Font Awesome, Chart.js, jQuery, Custom CSS</span>).</li>
+                <li><span dir="ltr">Event Listener</span> על <span dir="ltr">DOMContentLoaded</span> מפעיל את <span
+                        dir="ltr">loadData()</span>.</li>
+                <li><span dir="ltr">loadData()</span> מציגה מסך טעינה ומבצעת <span dir="ltr">Fetch</span> ל-<span
+                        dir="ltr">/api/findings</span>.</li>
+                <li>שרת (<span dir="ltr">app.js</span>): נתיב <span dir="ltr">/api/findings</span> מופעל. השרת טוען
+                    <span dir="ltr">API Key</span> מ-<span dir="ltr">.env</span>. מבצע סדרה של קריאות <span
+                        dir="ltr">API</span> אסינכרוניות ל-<span dir="ltr">SecurityScorecard API</span> (פורטפוליוז
+                    -&gt; חברות * לכל חברה -&gt; פקטורים/ממצאים). מעבד ומקטלג את הנתונים. בונה אובייקט <span
+                        dir="ltr">JSON</span> עם מערכי <span dir="ltr">high, medium, low</span>. מחזיר את ה-<span
+                        dir="ltr">JSON</span> ללקוח.
+                </li>
+                <li><span dir="ltr">Client (דפדפן)</span>: מקבל את אובייקט ה-<span dir="ltr">JSON</span>. שומר אותו
+                    ב-<span dir="ltr">allFindings</span>. <span dir="ltr">loadData()</span> מסתירה את מסך הטעינה. מעדכנת
+                    סטטיסטיקות, מאכלסת טבלאות, מעדכנת תרשימים ומאכלסת מסננים.</li>
+            </ul>
+        </li>
+        <li>סינון:
+            <ul>
+                <li>משתמש משנה בחירה במסנן כלשהו.</li>
+                <li><span dir="ltr">Event Listener</span> מפעיל <span dir="ltr">applyFilters()</span>.</li>
+                <li><span dir="ltr">applyFilters()</span> קוראת את ערכי המסננים. מפעילה את <span
+                        dir="ltr">filterFinding</span> על הנתונים הקיימים ב-<span dir="ltr">allFindings</span> כדי ליצור
+                    רשימות מסוננות. מרוקנת ומאכלסת מחדש את טבלאות ה-<span dir="ltr">HTML</span> עם הנתונים המסוננים.
+                    התרשימים והסטטיסטיקות נשארים ללא שינוי (מציגים את סך הכל).</li>
+            </ul>
+        </li>
+        <li>צפייה בפרטים:
+            <ul>
+                <li>משתמש לוחץ על כפתור "פרטים".</li>
+                <li><span dir="ltr">Event Listener</span> מפעיל <span dir="ltr">showFindingDetails()</span> עם רמת
+                    הסיכון והאינדקס המקורי.</li>
+                <li><span dir="ltr">showFindingDetails()</span> מוצאת את הממצא המלא מהמשתנה <span
+                        dir="ltr">allFindings</span>, מאכלסת את ה-<span dir="ltr">HTML</span> של ה-<span
+                        dir="ltr">Modal</span> ומציגה אותו.</li>
+            </ul>
+        </li>
+        <li>יצוא:
+            <ul>
+                <li>משתמש בוחר אפשרות יצוא.</li>
+                <li><span dir="ltr">Event Listener</span> מפעיל את הלוגיקה המתאימה (יצוא הכל/מסונן/לפי סיכון).</li>
+                <li>הלוגיקה המתאימה מכינה רשימת ממצאים (כל הממצאים, ממצאים מסוננים על ידי הפעלת <span
+                        dir="ltr">filterFinding</span> שוב, או ממצאים רק מרשימת ה-<span
+                        dir="ltr">high/medium/low</span>).</li>
+                <li>הרשימה מומרת לפורמט <span dir="ltr">CSV</span> ע"י <span dir="ltr">convertToCSV</span>.</li>
+                <li>הקובץ מורד לדפדפן ע"י <span dir="ltr">downloadCSV</span>.</li>
+            </ul>
+        </li>
+        <li>התנתקות:
+            <ul>
+                <li>משתמש לוחץ על כפתור "<span dir="ltr">Logout</span>".</li>
+                <li><span dir="ltr">Event Listener</span> מפעיל <span dir="ltr">logout()</span>.</li>
+                <li><span dir="ltr">logout()</span> מוחקת את מצב האימות מ-<span dir="ltr">sessionStorage</span> ומפנה
+                    ל-<span dir="ltr">/login.html</span>.</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h2>סיום אפיון</h2>
+
+
+    <hr>
+    <p>
+        מסמך אפיון זה נכתב על ידי - יניב וינמן yanivnet@gmail.com.
+    </p>
+
+</body>
+
+</html>

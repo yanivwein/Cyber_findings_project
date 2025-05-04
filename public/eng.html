@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Specification Document: SecurityScorecard Findings Dashboard</title>
+    <style>
+        /* Basic settings and reset */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Pleasant general font */
+            line-height: 1.7;
+            margin: 0 auto; /* Automatically centered */
+            padding: 30px 20px; /* Inner padding around content */
+            max-width: 960px; /* Maximum width for content for better readability */
+            background-color: #eef1f5; /* Gentle background for the whole page */
+            color: #333; /* Main text color */
+            text-align: left; /* Default alignment for LTR */
+        }
+
+        /* General text styling */
+        p {
+            margin-bottom: 1.2em; /* Margin below paragraphs */
+        }
+
+        /* Headings */
+        h1, h2, h3, h4, h5, h6 {
+            color: #004085; /* Darker blue for headings */
+            margin-top: 30px; /* Larger margin above headings */
+            margin-bottom: 15px; /* Margin below headings */
+            padding-bottom: 8px; /* Bottom padding above the line */
+            border-bottom: 2px solid #ced4da; /* More prominent bottom line */
+            font-weight: 600; /* Bold for headings */
+        }
+
+        h1 {
+            font-size: 2em; /* Size of the main heading */
+            border-bottom-color: #0056b3; /* Different color for main heading */
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            text-align: center; /* Center the main heading */
+        }
+
+        h2 {
+             font-size: 1.6em;
+        }
+
+        h3 {
+             font-size: 1.3em;
+             border-bottom-width: 1px; /* Thinner line */
+             padding-bottom: 5px;
+             margin-top: 25px;
+        }
+
+        /* Lists */
+        ul, ol {
+            margin-bottom: 1.2em;
+            padding-left: 25px; /* Inner padding for lists in LTR */
+            padding-right: 0; /* Remove inner padding from the right in LTR */
+        }
+
+        li {
+            margin-bottom: 0.6em; /* Smaller margin between list items */
+        }
+
+        ol {
+            list-style-type: decimal; /* Numbers for ordered list */
+        }
+
+        ul {
+            list-style-type: disc; /* Bullets for unordered list */
+        }
+
+        /* Separator line */
+        hr {
+            margin: 40px 0;
+            border: 0;
+            height: 1px; /* Line height */
+            background: #adb5bd; /* Gray color for the line */
+            /* Optional: add a "broken" look */
+            /* background: linear-gradient(to right, transparent, #ccc, transparent); */
+        }
+
+        /* Styling for code examples and diagrams (Left-to-Right) */
+        pre {
+            background-color: #f8f9fa; /* Very light background */
+            padding: 15px;
+            border-radius: 6px; /* More rounded corners */
+            overflow-x: auto; /* Horizontal scroll if code is long */
+            margin-top: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #dee2e6; /* Subtle border */
+            direction: ltr; /* Defined directly on the element */
+            text-align: left; /* Align left */
+            unicode-bidi: embed; /* Allows embedding LTR text within RTL */
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; /* Code font */
+            font-size: 0.9em; /* Slightly smaller font for code */
+            color: #212529; /* Dark text color for code */
+            white-space: pre-wrap; /* Wrap lines in long code */
+            word-wrap: break-word; /* Break long words */
+        }
+
+        code {
+            font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace; /* Code font */
+            font-size: 0.9em;
+            color: #c82333; /* Subtle red color for inline code */
+            background-color: #f8d7da; /* Subtle pink background for inline code */
+            border-radius: 4px;
+            padding: 3px 5px; /* Subtle padding for inline code */
+        }
+
+        pre code {
+             display: block; /* Code inside pre is block */
+             padding: 0; /* pre already provides padding */
+             background-color: transparent; /* pre already provides background */
+             color: #212529; /* Code color inside pre */
+             direction: ltr; /* Ensure LTR inside code block */
+             text-align: left;
+             unicode-bidi: embed;
+             white-space: pre-wrap; /* Wrap lines in long code */
+             word-wrap: break-word; /* Break long words */
+        }
+
+        /* Special style for the simple diagram */
+        pre.diagram {
+             background-color: #e9ecef; /* Bluish gray background */
+             color: #000;
+             border-color: #ced4da;
+             font-size: 0.85em; /* Slightly smaller for diagram */
+         }
+
+        /* Hide ignore comments in code */
+        .ignore-comment {
+            display: none;
+        }
+
+        /* Improve readability for links (if any) */
+        a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* Top margin for the first paragraph after a heading */
+         h1 + p, h2 + p, h3 + p {
+             margin-top: 0.5em;
+         }
+
+         /* Subtle bottom margin for nested lists within a list item */
+         li ul, li ol {
+             margin-bottom: 0;
+             margin-top: 0.5em;
+         }
+
+         /* Subtle styling for "Specification by" */
+         body > p:first-of-type {
+             text-align: center;
+             font-size: 0.9em;
+             color: #6c757d; /* Subtle gray */
+             margin-bottom: 30px; /* Large bottom margin before the line */
+         }
+
+    </style>
+</head>
+<body dir="ltr">
+
+    <p>
+        Specification Document by: Yaniv Weinman
+    </p>
+    <hr>
+
+    <h1>Project Specification Document: SecurityScorecard Findings Dashboard - Cyber Security project</h1>
+
+    <h2>1. Introduction</h2>
+    <p>
+        This project is an interactive dashboard displaying security findings retrieved using the SecurityScorecard API. The goal is to provide users with a centralized view of security findings from various companies in their portfolio, allowing filtering, display by Severity levels, and detailed viewing of each finding. The project is built with a Client-Server architecture using both client-side (Frontend) and server-side (Backend) technologies.
+    </p>
+
+    <h2>2. Project Goals</h2>
+    <ul>
+        <li>Provide a visual and intuitive interface for viewing security findings from the SecurityScorecard API.</li>
+        <li>Categorize and display findings by severity levels (High, Medium, Low).</li>
+        <li>Display statistical data and charts representing the distribution of findings by severity levels and factors.</li>
+        <li>Enable filtering of displayed findings based on various criteria (Company, Factor, Grade, Date Range).</li>
+        <li>Provide the ability to "Drill-down" to view full details of each finding.</li>
+        <li>Ability to export the displayed data (all findings or filtered findings) to a CSV file.</li>
+        <li>Basic access protection for the dashboard using a simple login screen (Client-side authentication).</li>
+        <li>Use the SecurityScorecard API to fetch data in real-time (or as provided by the API).</li>
+    </ul>
+
+    <h2>3. Technologies Used</h2>
+    <p>
+        The project integrates several technologies on both the client and server sides:
+    </p>
+    <ul>
+        <li>HTML5: Basic structure and organization of page content (login.html, index.html).</li>
+        <li>CSS3: Visual design and styling (including the use of Bootstrap and custom CSS).</li>
+        <li>JavaScript:
+            <ul>
+                <li>Client-side (Frontend): Handling user interactions, fetching data from the Backend API, processing and displaying data in tables and charts, local data filtering, handling the Modal (popup window) for finding details, basic login logic, and exporting data to CSV.</li>
+                <li>Server-side (Backend - Node.js): Creating a Web server, managing routing, exposing an API Endpoint, fetching data from the SecurityScorecard API using HTTP Requests, initial processing of the data, and returning it to the client in JSON format.</li>
+            </ul>
+        </li>
+        <li>API (SecurityScorecard): The external data source. The project integrates with it to retrieve security findings.</li>
+        <li>Express: Server-side Framework in Node.js. Used to create the Web server, define Routes, and handle HTTP Requests/Responses.</li>
+        <li>Axios: Client library for making HTTP Requests from the server-side (in app.js) to the SecurityScorecard API.</li>
+        <li>Dotenv: Library for loading environment variables from a .env file (used to store the SecurityScorecard API Key).</li>
+        <li>Bootstrap 5: Popular CSS Framework that allows for building responsive and styled user interfaces quickly (Grid system, Components like Cards, Tables, Navs, Modals, Dropdowns, buttons, forms).</li>
+        <li>Font Awesome: Library for icons (Font-based icons) used to improve the visual appearance (buttons, titles).</li>
+        <li>Chart.js: JavaScript library for creating custom charts (used to create the Bar and Doughnut charts in the dashboard).</li>
+        <li>jQuery: JavaScript library used in the project mainly for interaction with Bootstrap's Modal (It would have been possible to use Bootstrap 5 JS alone, but jQuery was included in the code).</li>
+        <li>MongoDB / Mongoose: Important note: These libraries appear in package.json and package-lock.json (project dependencies), but they are not actively used in the provided server code (app.js). They were likely included for future development or experiments, but the current dashboard does not connect to this NoSQL database and does not store data in it.</li>
+    </ul>
+
+    <h2>4. Architecture</h2>
+    <p>
+        The project is implemented using a Client-Server architecture:
+    </p>
+    <ol>
+        <li>Client (Browser): Based on HTML, CSS, JavaScript files. Displays the user interface, handles the login logic (Client-side), makes HTTP GET calls to the Backend API, processes the received data, displays it in tables and charts, and handles filtering and export.</li>
+        <li>Server (Node.js + Express): Based on the app.js file. Serves as an HTTP server that delivers the static Frontend files. Additionally, exposes an API Endpoint (/api/findings) which acts as a Proxy between the Client and the SecurityScorecard API. The Server handles authentication with the SecurityScorecard API (using the API Key), fetches the relevant information, and passes it to the client in standard JSON format. It does not permanently store the data in a database.</li>
+        <li>External API (SecurityScorecard): External service that provides security findings via a REST API.</li>
+    </ol>
+    <p>
+        Simple Architecture Diagram:
+    </p>
+    <pre dir="ltr" class="diagram"><code>
+      +------------+      HTTP Request      +---------------+      HTTP Request      +-----------------------+
+|   Client   | ---------------------> | Server (Node) | ---------------------> | SecurityScorecard API |
+| (Browser)  |                        |    Express    |                        |                       |
++------------+      HTTP Response     +---------------+      HTTP Response     +-----------------------+
+     ^                                       |
+     |                                       | Serves Static Files (HTML, CSS, JS)
+     |                                       |
+     +---------------------------------------+
+    </code></pre>
+
+    <h2>5. Functional Requirements</h2>
+    <ul>
+        <li>User Login:
+            <ul>
+                <li>Display login screen (login.html).</li>
+                <li>Receive username and password.</li>
+                <li>Client-side check for matching login details against predefined values ('admin', 'securityscorecard').</li>
+                <li>Store login state in sessionStorage.</li>
+                <li>Redirect to the dashboard page (index.html) in case of successful login.</li>
+                <li>Display an error message in case of incorrect details.</li>
+                <li>Redirect to the login page if the user attempts to access the dashboard without login state in sessionStorage.</li>
+            </ul>
+        </li>
+        <li>Main Dashboard:
+            <ul>
+                <li>Display project title and author details.</li>
+                <li>Display action buttons: Refresh, Export, Logout.</li>
+                <li>Display statistical summary of findings: Total, High, Medium, Low.</li>
+                <li>Display a Bar Chart detailing findings by factors and severity level.</li>
+                <li>Display a Doughnut Chart detailing finding distribution by severity level.</li>
+            </ul>
+        </li>
+        <li>Filtering Findings:
+            <ul>
+                <li>Display filter controls: Company selection, Factor selection, Grade selection, Date range selection (Today, This Week, This Month, All Time).</li>
+                <li>Dynamic update of tables according to filter selections.</li>
+            </ul>
+        </li>
+        <li>Detailed Findings Display:
+            <ul>
+                <li>Division of findings into Tabs by severity level: High, Medium, Low.</li>
+                <li>In each tab, display a table with main columns for each finding: Company, Finding (Title), Factor, Factor Grade, Score Impact, Number of Issues, Date/Time.</li>
+                <li>Provide a "Details" ("Drilldown") button in each table row.</li>
+            </ul>
+        </li>
+        <li>Finding Details (Modal):
+            <ul>
+                <li>Display a popup window (Modal) on clicking the "Details" button.</li>
+                <li>Display extended details about the selected finding, including Company, Domain, Title, Description, Severity Level, Factor, Factor Grade, Score Impact, Number of Issues, Date/Time, Issue Type, and all full data in JSON format.</li>
+            </ul>
+        </li>
+        <li>Data Export:
+            <ul>
+                <li>"Export" button with a dropdown menu.</li>
+                <li>Export options: All findings, Filtered findings (according to active filters), Findings by specific severity level (High, Medium, Low).</li>
+                <li>Export the data to a file in CSV format.</li>
+            </ul>
+        </li>
+        <li>Data Refresh:
+            <ul>
+                <li>"Refresh Data" button that performs a repeated call to the Backend API and updates the entire interface.</li>
+            </ul>
+        </li>
+        <li>Loading State:
+            <ul>
+                <li>Display a loading screen (Loading Overlay) while data is being fetched from the Backend API.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>6. Technical Implementation Details</h2>
+
+    <h3>6.1 Client-Side (Frontend)</h3>
+
+    <h4>6.1.1 HTML Structure and CSS Styling (index.html, login.html, Custom CSS)</h4>
+    <ul>
+        <li>The code uses a basic semantic HTML structure.</li>
+        <li>Bootstrap 5 provides most of the styling and responsiveness (Grid system - .row, .col-*, Components - like .card, .table, .nav-tabs, .modal, .dropdown, buttons - .btn, forms - .form-select, .form-control).</li>
+        <li>Font Awesome provides visual icons (e.g., fas fa-shield-alt, fas fa-sync-alt, fas fa-file-export).</li>
+        <li>The internal CSS file in index.html provides custom styles that extend or override Bootstrap for specific needs (for example, styling the .grade-badge, colors for .severity-high, .medium-severity, .low-severity, styling the .loading-overlay and .json-viewer).</li>
+    </ul>
+    <p>
+        Code Example - Statistical Card Structure (from index.html):
+    </p>
+    <pre dir="ltr"><code>
+      &lt;div class="col-md-3"&gt;
+    &lt;div class="card stats-card"&gt;
+        &lt;div class="card-body"&gt;
+            &lt;div class="label"&gt;High Severity&lt;/div&gt;
+            &lt;div class="number high-severity" id="highCount"&gt;0&lt;/div&gt;
+            &lt;div class="progress"&gt;
+                &lt;div class="progress-bar progress-bar-high" role="progressbar" style="width: 100%"&gt;&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+    </code></pre>
+    <p>
+        Usage of Bootstrap's .card, .stats-card (custom), .card-body, .label, .number, .progress, .progress-bar along with custom color classes.
+    </p>
+    <p>
+        Code Example - Grade Badge Styling (from CSS in index.html):
+    </p>
+    <pre dir="ltr"><code>
+.grade-badge {
+    display: inline-block;
+    width: 28px;
+    height: 28px;
+    line-height: 28px; /* Vertically centered */
+    text-align: center;
+    border-radius: 50%;
+    font-weight: bold;
+    color: white;
+}
+
+.grade-A {
+    background-color: #28a745; /* Green color */
+}
+/* ... additional colors for B, C, D, F */
+    </code></pre>
+
+    <h4>6.1.2 JavaScript Logic (Client-side Script in index.html)</h4>
+    <ul>
+        <li>Loading Data (loadData): Asynchronous function that performs a Fetch to the API Endpoint on the Backend (/api/findings). Displays and hides the loading screen. Updates the global variable allFindings. After loading, calls functions to update statistics, tables, charts, and filters.</li>
+    </ul>
+    <p>
+        Code Example - Fetch API call:
+    </p>
+    <pre dir="ltr"><code>
+async function loadData() {
+    showLoading(true);
+    try {
+        const response = await fetch('/api/findings');
+        if (!response.ok) {
+            throw new Error('Failed to fetch findings');
+        }
+        allFindings = await response.json();
+        updateCounts();
+        populateTables(); // Populate initial tables
+        updateCharts();
+        populateFilters(); // Populates filters and sets up listeners
+        setupExportButtons(); // Setup export buttons
+        showLoading(false);
+    } catch (error) {
+        console.error('Error loading findings:', error);
+        alert('Failed to load findings. Please try again.');
+        showLoading(false);
+    }
+}
+    </code></pre>
+    <ul>
+        <li>Updating Statistics (updateCounts): Counts the number of findings for each severity level (High, Medium, Low) and overall from the allFindings variable and updates the corresponding HTML elements (#highCount, #mediumCount, #lowCount, #totalFindings).</li>
+        <li>Updating Charts (updateCharts): Collects the relevant data (number of findings by factor and risk, number of findings by risk) from the allFindings variable. Updates the Chart.js objects (factorChart, severityChart) and causes them to re-render.</li>
+    </ul>
+    <p>
+        Code Example - Chart.js Update:
+    </p>
+    <pre dir="ltr"><code>
+// ... within updateCharts()
+factorChart.data.labels = factorNames;
+factorChart.data.datasets[0].data = highData;
+factorChart.data.datasets[1].data = mediumData;
+factorChart.data.datasets[2].data = lowData;
+factorChart.update();
+
+severityChart.data.datasets[0].data = [
+    allFindings.high.length,
+    allFindings.medium.length,
+    allFindings.low.length
+];
+severityChart.update();
+    </code></pre>
+    <ul>
+        <li>Populating Filters (populateFilters): Collects the list of unique companies and factors from all findings in the allFindings variable. Adds them as options (&lt;option&gt;) to the corresponding dropdown lists (#companyFilter, #factorFilter). Calls the setupFilterListeners function to set up change listeners.</li>
+        <li>Setting Up Filter Listeners (setupFilterListeners): Adds an Event Listener (type 'change') to each of the filter controls. Each change in one of them triggers the applyFilters function.</li>
+        <li>Applying Filters (applyFilters): Called every time one of the filters changes. Reads the current values from all filter controls. Iterates through the findings for each severity level in the allFindings variable, applies the filterFinding function to them, and creates new arrays of filtered findings. Empties the HTML tables and repopulates them only with the filtered findings using the addFindingToTable function.</li>
+        <li>Filtering Function (filterFinding): A local Client-side function that receives a finding object and the current filter values. Returns true if the finding meets all filter conditions, and false otherwise. Includes logic for filtering by company, factor, grade, and dates (Today, Last Week, Last Month).</li>
+    </ul>
+    <p>
+        Code Example - Date Filtering Logic:
+    </p>
+    <pre dir="ltr"><code>
+if (date) {
+    if (!finding.created_at) return false; // Skip if no date
+
+    const findingDate = new Date(finding.created_at);
+    const now = new Date();
+
+    if (date === 'today') {
+        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+        if (findingDate &lt; todayStart || findingDate &gt;= todayEnd) return false;
+    } else if (date === 'week') {
+        const sevenDaysAgo = new Date(now);
+        sevenDaysAgo.setDate(now.getDate() - 7);
+        if (findingDate &lt; sevenDaysAgo || findingDate &gt; now) return false;
+    } else if (date === 'month') {
+        const thirtyDaysAgo = new Date(now);
+        thirtyDaysAgo.setDate(now.getDate() - 30);
+        if (findingDate &lt; thirtyDaysAgo || findingDate &gt; now) return false;
+    }
+}
+return true; // Finding passes all filters
+    </code></pre>
+    <ul>
+        <li>Populating Table (populateTables, addFindingToTable): populateTables is called after data loading (or applying filters) and clears all table bodies. addFindingToTable receives a finding and adds a new row to the specific table (High/Medium/Low). Creates the HTML for the row including a "Details" button with data-* attributes to store the severity level and the original index of the finding in the allFindings array (important for Drilldown). Adds an Event Listener to the "Details" button.</li>
+    </ul>
+    <p>
+        Code Example - Creating Table Row and Adding Listener:
+    </p>
+    <pre dir="ltr"><code>
+function addFindingToTable(tableId, finding, severity, index) {
+    const tableBody = document.getElementById(tableId);
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        &lt;td&gt;${finding.companyName || 'N/A'}&lt;/td&gt;
+        ... other cells ...
+        &lt;td&gt;
+          &lt;button class="btn btn-sm btn-primary drilldown-btn" data-severity="${severity}" data-index="${index}"&gt;
+            &lt;i class="fas fa-search-plus"&gt;&lt;/i&gt; Details
+          &lt;/button&gt;
+        &lt;/td&gt;
+    `;
+    row.querySelector('.drilldown-btn').addEventListener('click', function () {
+        const severity = this.getAttribute('data-severity');
+        const index = parseInt(this.getAttribute('data-index'), 10);
+        showFindingDetails(severity, index); // Call function to show modal
+    });
+    tableBody.appendChild(row);
+}
+    </code></pre>
+    <ul>
+        <li>Displaying Finding Details (showFindingDetails): Called on clicking the "Details" button. Receives the severity level and original index of the finding. Finds the corresponding finding in the allFindings array. Populates the elements inside the HTML Modal (popup window) with the finding details. Displays the Modal.</li>
+    </ul>
+    <p>
+        Code Example - Finding the Finding and Displaying JSON in Modal:
+    </p>
+    <pre dir="ltr"><code>
+function showFindingDetails(severity, index) {
+    const finding = allFindings[severity] &amp;&amp; allFindings[severity][index] ? allFindings[severity][index] : null;
+    if (!finding) { /* Handle error */ return; }
+
+    // Populate HTML elements in the modal...
+    document.getElementById('modal-json').textContent = JSON.stringify(finding, null, 2);
+
+    findingDetailsModal.show(); // Show the Bootstrap modal
+}
+    </code></pre>
+    <ul>
+        <li>CSV Export (convertToCSV, downloadCSV, setupExportButtons):
+            <ul>
+                <li>convertToCSV: Receives an array of finding objects and converts them to a string in CSV format, including header columns and handling fields containing commas or quotes.</li>
+                <li>downloadCSV: Receives CSV content and a filename, and creates a virtual link to download the file in the browser.</li>
+                <li>setupExportButtons: Sets up Event Listeners for the export buttons in the dropdown menu. Each button triggers the appropriate logic (export all, export filtered, export by severity) using the convertToCSV and downloadCSV functions. Exporting "Filtered findings" reads the current filter values and applies filterFinding again to all data to get the correct list for export.</li>
+            </ul>
+        </li>
+    </ul>
+    <p>
+        Code Example - Event Listener for Filtered Export Button:
+    </p>
+    <pre dir="ltr"><code>
+document.getElementById('exportFilteredCsv').addEventListener('click', function (e) {
+    e.preventDefault();
+    // Get filter values...
+    const companyValue = document.getElementById('companyFilter').value;
+    // ... get other filter values ...
+
+    // Filter findings using the client-side filterFinding function
+    const filteredHigh = allFindings.high.filter(finding => filterFinding(finding, companyValue, factorValue, gradeValue, dateValue));
+    const filteredMedium = allFindings.medium.filter(finding => filterFinding(finding, companyValue, factorValue, gradeValue, dateValue));
+    const filteredLow = allFindings.low.filter(finding => filterFinding(finding, companyValue, factorValue, gradeValue, dateValue));
+
+    const filteredFindings = [...filteredHigh, ...filteredMedium, ...filteredLow];
+    const csv = convertToCSV(filteredFindings);
+    downloadCSV(csv, 'securityscorecard_filtered_findings.csv');
+});
+    </code></pre>
+    <ul>
+        <li>Login Logic (login.html script): Simple JavaScript code that listens for the form's Submit event. Reads the field values, performs a comparison against predefined values ('admin', 'securityscorecard'). In case of a match, stores the key 'authenticated' with the value 'true' in sessionStorage and redirects to the dashboard page. In case of a mismatch, displays an error message.</li>
+    </ul>
+    <p>
+        Code Example - Login Logic:
+    </p>
+    <pre dir="ltr"><code>
+document.getElementById('loginForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    if (username === 'admin' &amp;&amp; password === 'securityscorecard') { // Hardcoded check
+        sessionStorage.setItem('authenticated', 'true');
+        window.location.href = 'index.html';
+    } else {
+        document.getElementById('loginError').style.display = 'block';
+    }
+});
+    </code></pre>
+    <ul>
+        <li>Authentication Check in index.html: JavaScript code at the beginning of the file checks if the key 'authenticated' exists and is equal to 'true' in sessionStorage. If not, automatically redirects to the login page. The logout function simply deletes this key and redirects to the login page.</li>
+    </ul>
+
+    <h3>6.2 Server-Side (Backend - app.js)</h3>
+    <ul>
+        <li>Express Server Setup: Creating a basic Express application. Setting the listening port (environment variable or default 3000).</li>
+    </ul>
+    <p>
+        Code Example - Express Setup:
+    </p>
+    <pre dir="ltr"><code>
+const express = require('express');
+const app = express();
+const port = process.env.PORT || 3000;
+// ... other imports
+app.listen(port, () => {
+    console.log(`Server running on http://localhost:${port}`);
+});
+    </code></pre>
+    <ul>
+        <li>Serving Static Files: Defining Express Middleware (express.static('public')) to serve static files (like index.html, login.html, CSS, JS) from the 'public' folder. The Frontend files (except possibly the JS embedded in HTML) should be moved to this folder.</li>
+        <li>Basic Routing: Defining routing for the base path (/) that redirects to the login page (login.html).</li>
+    </ul>
+    <p>
+        Code Example - Basic Routing:
+    </p>
+    <pre dir="ltr"><code>
+app.use(express.static('public')); // Assuming files are in 'public'
+app.get('/', (req, res) => {
+    res.redirect('/login.html'); // Redirect to login
+});
+    </code></pre>
+    <ul>
+        <li>API Endpoint (/api/findings): Defining a GET path for this API. This is the main server-side function for fetching data.</li>
+        <li>Loading Environment Variables (dotenv): Using the dotenv library to load environment variables from a .env file (like the API Key).</li>
+    </ul>
+    <p>
+        Code Example - Dotenv:
+    </p>
+    <pre dir="ltr"><code>
+require('dotenv').config();
+const API_KEY = process.env.SECURITYSCORECARD_API_KEY;
+    </code></pre>
+    <ul>
+        <li>Fetching Data from SecurityScorecard API (axios):
+            <ul>
+                <li>The function at /api/findings uses axios to make calls to the SecurityScorecard API.</li>
+                <li>First step: Fetching the list of portfolios (/portfolios).</li>
+                <li>Second step: Loop through each found portfolio, and fetch the list of companies within each portfolio (/portfolios/:id/companies). Collecting all found companies (while removing duplicates).</li>
+                <li>Third step: Loop through each unique company, and fetch the list of factors for this company (/companies/:domain/factors).</li>
+                <li>Fourth step: Within the loop through factors, process the data from factor.issue_summary. Create a new 'finding' object for each issue_summary, including relevant details and association with the company and factor. Categorize the findings into high, medium, low arrays.</li>
+                <li>Handling factors with low grades (D, F) without details in issue_summary - create a general finding for them.</li>
+            </ul>
+        </li>
+    </ul>
+    <p>
+        Code Example - Fetching Portfolios and Companies:
+    </p>
+    <pre dir="ltr"><code>
+app.get('/api/findings', async (req, res) => {
+    try {
+        // Fetch Portfolios
+        const portfoliosResponse = await axios.get(`${API_BASE_URL}/portfolios`, { headers: { 'Authorization': `Token ${API_KEY}`, 'Accept': 'application/json' } });
+        const portfolios = portfoliosResponse.data.entries;
+
+        let allCompanies = [];
+        for (const portfolio of portfolios) {
+            // Fetch companies for each portfolio
+            const portfolioCompaniesResponse = await axios.get(`${API_BASE_URL}/portfolios/${portfolio.id}/companies`, { headers: { 'Authorization': `Token ${API_KEY}`, 'Accept': 'application/json' } });
+            if (portfolioCompaniesResponse.data &amp;&amp; portfolioCompaniesResponse.data.entries) {
+                 allCompanies = [...allCompanies, ...portfolioCompaniesResponse.data.entries];
+            }
+        }
+        // Remove duplicates...
+
+        // Loop through uniqueCompanies and fetch factors...
+        // Process factors and issues...
+
+        res.json(allFindings); // Return the categorized findings
+    } catch (error) {
+        console.error('Error fetching findings:', error.message);
+        res.status(500).json({ error: 'Failed to fetch findings', details: error.message });
+    }
+});
+    </code></pre>
+    <ul>
+        <li>Processing and Categorizing Findings: Logic that maps the raw data from the API to 'finding' objects with a uniform structure and sorts them into High, Medium, Low arrays within the final allFindings object sent to the client. Handles cases of missing fields from the API (uses 'N/A' or default values).</li>
+        <li>Helper Functions in Backend: Helper functions exist such as formatIssueType and formatFactorName whose purpose is to process the factor names/issue types received from the API (which are usually in snake_case format) to a more readable format for the user (with spaces and capitalization). Note that similar functions also exist in Client-side JavaScript and are used there for display and local filtering.</li>
+        <li>Mock Data Fallback: If the process of fetching data from the API yields no findings at all, logic exists to add predefined Mock data so that the dashboard is not completely empty. This is useful for testing or in case of an API failure.</li>
+    </ul>
+
+    <h3>6.3 Usage of MongoDB/Mongoose (Not Implemented)</h3>
+    <p>
+        Although the dependencies are included in package.json, the app.js code does not include code that performs:
+    </p>
+    <ul>
+        <li>Connection to a MongoDB server.</li>
+        <li>Defining Schemas or Models using Mongoose.</li>
+        <li>Storing data (findings) in the database.</li>
+        <li>Fetching data from the database (instead of or in addition to fetching from the SecurityScorecard API).</li>
+    </ul>
+    <p>
+        If the project were more developed, these libraries could be used for:
+    </p>
+    <ul>
+        <li>Local storage of API findings (to avoid repeated calls to the external API or to allow for longer history).</li>
+        <li>Server-side user and permissions management (instead of basic local authentication).</li>
+        <li>Storing user settings or cumulative statistics.</li>
+    </ul>
+
+    <h2>7. Data Flow</h2>
+    <ol>
+        <li>Login:
+            <ul>
+                <li>User accesses the base URL (/).</li>
+                <li>Express server redirects them to /login.html.</li>
+                <li>The browser loads login.html and accompanying CSS/JS files (Bootstrap, Font Awesome).</li>
+                <li>User enters details and submits the form.</li>
+                <li>JavaScript code in login.html checks the details. If valid, stores in sessionStorage and redirects to /index.html.</li>
+            </ul>
+        </li>
+        <li>Initial Dashboard Load:
+            <ul>
+                <li>The browser accesses /index.html.</li>
+                <li>The JS code at the beginning of index.html checks sessionStorage. If authenticated, proceeds. If not, redirects to /login.html.</li>
+                <li>The browser loads index.html and accompanying CSS/JS files (Bootstrap, Font Awesome, Chart.js, jQuery, Custom CSS).</li>
+                <li>An Event Listener on DOMContentLoaded triggers loadData().</li>
+                <li>loadData() displays a loading screen and performs a Fetch to /api/findings.</li>
+                <li>Server (app.js): The /api/findings path is activated. The server loads the API Key from .env. Performs a series of asynchronous API calls to the SecurityScorecard API (Portfolios -> Companies * for each company -> Factors/Findings). Processes and categorizes the data. Builds a JSON object with high, medium, low arrays. Returns the JSON to the client.</li>
+                <li>Client (Browser): Receives the JSON object. Stores it in allFindings. loadData() hides the loading screen. Updates statistics, populates tables, updates charts, and populates filters.</li>
+            </ul>
+        </li>
+        <li>Filtering:
+            <ul>
+                <li>User changes a selection in any filter.</li>
+                <li>An Event Listener triggers applyFilters().</li>
+                <li>applyFilters() reads the filter values. Applies filterFinding to the existing data in allFindings to create filtered lists. Empties and repopulates the HTML tables with the filtered data. The charts and statistics remain unchanged (displaying the total).</li>
+            </ul>
+        </li>
+        <li>Viewing Details:
+            <ul>
+                <li>User clicks on the "Details" button.</li>
+                <li>An Event Listener triggers showFindingDetails() with the severity level and original index.</li>
+                <li>showFindingDetails() finds the full finding from the allFindings variable, populates the Modal's HTML, and displays it.</li>
+            </ul>
+        </li>
+        <li>Export:
+            <ul>
+                <li>User selects an export option.</li>
+                <li>An Event Listener triggers the appropriate logic (export all/filtered/by severity).</li>
+                <li>The appropriate logic prepares a list of findings (all findings, filtered findings by re-applying filterFinding, or findings only from the high/medium/low list).</li>
+                <li>The list is converted to CSV format by convertToCSV.</li>
+                <li>The file is downloaded to the browser by downloadCSV.</li>
+            </ul>
+        </li>
+        <li>Logout:
+            <ul>
+                <li>User clicks on the "Logout" button.</li>
+                <li>An Event Listener triggers logout().</li>
+                <li>logout() deletes the authentication state from sessionStorage and redirects to /login.html.</li>
+            </ul>
+        </li>
+    </ol>
+
+    <h2>8. Further Considerations / Possible Improvements</h2>
+    <ul>
+        <li>Security: The current login is Client-side only and is not secure (easy to bypass). A server-side user authentication mechanism should be implemented (e.g., using Session Management or JWT) and the /api/findings Endpoint should be protected.</li>
+        <li>Data Storage: To avoid complete dependency on the SecurityScorecard API in real-time or to allow viewing historical data, MongoDB (or another database) can be used to store the findings fetched from the API. The server could then serve data from the DB instead of or in addition to live fetching.</li>
+        <li>Handling Pagination/Data Load: If the volume of findings is very large, performance issues may arise on the client-side (loading all data into browser memory). Pagination (dividing into pages) or Infinite Scroll can be implemented both in the Backend API (if SecurityScorecard API supports it) and in the Frontend.</li>
+        <li>Error Handling: Improve the display of error messages to the user in case of a failure in the SecurityScorecard API or the Backend.</li>
+        <li>API Call Optimization: The current data fetching method makes many API calls (Portfolios -> Companies * per company -> Factors). If the SecurityScorecard API allows for a more efficient way to fetch all relevant findings with fewer calls, this would improve performance and loading time.</li>
+        <li>Additional UI/UX: Table search, column sorting, more complex filtering options.</li>
+    </ul>
+
+    <hr>
+    <p>
+        This specification document is based solely on the code provided, detailing its structure, technologies, and existing functionality. It explicitly notes the technologies included in dependencies but not actively used in the current code.
+    </p>
+
+</body>
+</html>
